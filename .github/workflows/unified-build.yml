@@ -6,7 +6,7 @@
 #
 # How it works:
 #   1. Checks out this backend repo (pipeline base)
-#   2. Checks out the frontend repo (ZenBit-Tech/orange_anonymization_fe)
+#   2. Checks out the frontend repo (IhnatVelykoivan/orange_anonymization_fe)
 #      into a temporary `frontend/` directory using a read-only PAT
 #   3. Builds the frontend (Vite → dist/)
 #   4. Copies frontend/dist → frontend-dist/ in the backend workspace
@@ -45,7 +45,7 @@ on:
 
 env:
   NODE_VERSION: '20'
-  FRONTEND_REPO: ZenBit-Tech/orange_anonymization_fe
+  FRONTEND_REPO: IhnatVelykoivan/orange_anonymization_fe
   FRONTEND_BRANCH: develop
   FRONTEND_DIST_DIR: frontend-dist
 
