@@ -7,6 +7,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { JobsModule } from './modules/jobs/jobs.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { HealthModule } from './modules/health/health.module';
+import { SyntheticDataModule } from './modules/synthetic-data/synthetic-data.module';
 const DB_RETRY_ATTEMPTS = 10;
 const DB_RETRY_DELAY = 3_000;
 
@@ -66,6 +67,7 @@ const DB_RETRY_DELAY = 3_000;
     JobsModule,
     DashboardModule,
     HealthModule,
+    SyntheticDataModule,
   ],
 })
 export class AppModule {}
