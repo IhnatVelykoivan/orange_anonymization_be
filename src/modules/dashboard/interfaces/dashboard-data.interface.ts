@@ -4,6 +4,9 @@ export interface DashboardData {
   metrics: Metrics;
   chartData: ChartData[];
   recentActivity: RecentActivity[];
+  strategiesDistribution: DistributionData[];
+  frameworksDistribution: DistributionData[];
+  entitiesDistribution: DistributionData[];
   message?: string;
   emptyState?: boolean;
   startDate?: string;
@@ -15,7 +18,7 @@ export interface RecentActivity {
   framework: string;
   status: JobStatus;
   createdAt: string;
-  fileName: string | null;
+  fileName: string;
   entitiesCount: number;
 }
 
@@ -26,7 +29,7 @@ export interface RecentActivityResponse {
   limit: number;
 }
 
-interface Metrics {
+export interface Metrics {
   totalDocuments: number;
   entitiesDetected: number;
   anonymizationRate: number;
@@ -40,7 +43,7 @@ export interface ChartData {
 }
 
 export interface DistributionData {
-  name: string;
+  key: string;
   count: number;
 }
 

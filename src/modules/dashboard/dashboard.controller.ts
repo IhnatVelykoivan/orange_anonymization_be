@@ -13,7 +13,6 @@ import { JwtAuthGuard } from '@/modules/auth/guards/auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   DashboardData,
-  DistributionData,
   ParseDates,
   RecentActivityResponse,
 } from '@/modules/dashboard/interfaces/dashboard-data.interface';
@@ -69,36 +68,6 @@ export class DashboardController {
       startDate ? new Date(startDate) : undefined,
       endDate ? new Date(endDate) : undefined,
     );
-  }
-
-  @Get('charts/strategies')
-  async getStrategiesChart(
-    @Req() req: RequestWithUser,
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
-  ): Promise<DistributionData[]> {
-    const { start, end } = this.parseDates(startDate, endDate);
-    return this.jobsService.getStrategiesDistribution(req.user.sub, start, end);
-  }
-
-  @Get('charts/frameworks')
-  async getFrameworksChart(
-    @Req() req: RequestWithUser,
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
-  ): Promise<DistributionData[]> {
-    const { start, end } = this.parseDates(startDate, endDate);
-    return this.jobsService.getFrameworksDistribution(req.user.sub, start, end);
-  }
-
-  @Get('charts/entities')
-  async getEntitiesChart(
-    @Req() req: RequestWithUser,
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
-  ): Promise<DistributionData[]> {
-    const { start, end } = this.parseDates(startDate, endDate);
-    return this.jobsService.getEntitiesDistribution(req.user.sub, start, end);
   }
 
   private parseDates(startDate?: string, endDate?: string): ParseDates {
