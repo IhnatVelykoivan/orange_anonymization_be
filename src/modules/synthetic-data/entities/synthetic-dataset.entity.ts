@@ -35,11 +35,9 @@ export class SyntheticDataset {
   @Column({ type: 'int' })
   recordsCount: number;
 
-  // Computed response payload (compliance, quality, preview, etc.). Small.
   @Column({ type: 'json', nullable: true })
   summary: SyntheticDataSummary | null;
 
-  // Absolute path to the generated export file on disk (streamed on download).
   @Column({ type: 'varchar', length: 512, nullable: true })
   filePath: string | null;
 

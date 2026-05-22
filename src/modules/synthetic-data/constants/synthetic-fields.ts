@@ -4,11 +4,8 @@ export enum SyntheticOutputFormat {
   XLSX = 'XLSX',
 }
 
-// 5 meta fields that are always present and always populated.
 export const DEFAULT_FIELDS: string[] = ['record_id', 'doc_type', 'age_range', 'date', 'quality'];
 
-// 18 entity fields. Present in every row, but only populated with synthetic
-// values when the corresponding entity type is detected in raw_text.
 export const ENTITY_FIELDS: string[] = [
   'PERSON',
   'LOCATION',
@@ -31,9 +28,8 @@ export const ENTITY_FIELDS: string[] = [
 ];
 
 export const ALL_FIELDS: string[] = [...DEFAULT_FIELDS, ...ENTITY_FIELDS];
-export const TOTAL_FIELDS_COUNT = ALL_FIELDS.length; // 23
+export const TOTAL_FIELDS_COUNT = ALL_FIELDS.length;
 
-// Presidio analyzer entity_type -> our output column name.
 export const PRESIDIO_TO_COLUMN: Record<string, string> = {
   PERSON: 'PERSON',
   LOCATION: 'LOCATION',
@@ -53,7 +49,6 @@ export const PRESIDIO_TO_COLUMN: Record<string, string> = {
   PHOTO: 'PHOTO',
 };
 
-// Entity types we ask Presidio to look for in raw_text.
 export const PRESIDIO_ENTITIES: string[] = [...new Set(Object.keys(PRESIDIO_TO_COLUMN))];
 
 export const AGE_RANGES: string[] = [
@@ -86,7 +81,6 @@ export const ANALYSIS_LANGUAGE = 'en';
 export const ANALYSIS_SCORE_THRESHOLD = 0.5;
 export const LOW_CONFIDENCE_THRESHOLD = 0.6;
 
-// Summary labels (kept as named constants to avoid scattered magic strings).
 export const RISK_LEVEL_LOW = 'Low';
 export const IDENTIFIERS_NOT_DETECTED = 'Not detected';
 export const QUALITY_GOOD = 'Good';
@@ -98,5 +92,4 @@ export const GDPR_MATCH_TOKEN = 'gdpr';
 const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
 const MINUTES_PER_HOUR = 60;
-// Temporary datasets live for one hour, then are swept (≈ JWT session window).
 export const DATASET_TTL_MS = MINUTES_PER_HOUR * SECONDS_PER_MINUTE * MS_PER_SECOND;

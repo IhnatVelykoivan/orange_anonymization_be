@@ -26,7 +26,6 @@ const PERSON_SUFFIX = ' (Synthetic)';
 
 @Injectable()
 export class FakeDataService {
-  // Keyed by output column name (see ENTITY_FIELDS).
   private readonly generators: Record<string, () => string> = {
     PERSON: () => `${faker.person.fullName()}${PERSON_SUFFIX}`,
     LOCATION: () => faker.location.city(),

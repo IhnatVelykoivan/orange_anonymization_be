@@ -6,7 +6,6 @@ import { SyntheticOutputFormat } from '@/modules/synthetic-data/constants/synthe
 const MIN_RECORDS = 1;
 const MAX_RECORDS = 100000;
 
-// Wire contract uses snake_case to match the frontend payload exactly.
 export class GenerateSyntheticDataDto {
   @ApiProperty({
     description: 'Clinical text pasted by the user',

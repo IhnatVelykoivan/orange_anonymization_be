@@ -77,7 +77,6 @@ export class SyntheticDataService {
     });
     await this.datasetRepository.save(dataset);
 
-    // Fire-and-forget: respond 202 immediately, generate in the background.
     void this.runGeneration(dataset.id, dto.raw_text).catch((error) => {
       this.logger.error(
         `Synthetic generation ${dataset.id} crashed`,
