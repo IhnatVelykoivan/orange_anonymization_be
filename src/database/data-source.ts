@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
 import { User } from '@/modules/users/user.entity';
 import { Job } from '@/modules/jobs/entities/job.entity';
+import { SyntheticDataset } from '@/modules/synthetic-data/entities/synthetic-dataset.entity';
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USERNAME ?? DEFAULT_DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME ?? DEFAULT_DB_NAME,
-  entities: [User, Job],
+  entities: [User, Job, SyntheticDataset],
   migrations: [__dirname + '/migrations/*{.ts,.js}'],
   synchronize: false,
   logging: false,
