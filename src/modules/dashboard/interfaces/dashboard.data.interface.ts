@@ -7,6 +7,7 @@ export interface DashboardData {
   strategiesDistribution: DistributionData[];
   frameworksDistribution: DistributionData[];
   entitiesDistribution: DistributionData[];
+  statusesDistribution: StatusDistribution[];
   message?: string;
   emptyState?: boolean;
   startDate?: string;
@@ -47,7 +48,7 @@ export interface DistributionData {
   count: number;
 }
 
-export interface ParseDates {
-  start: Date;
-  end: Date;
+export interface StatusDistribution {
+  key: JobStatus;
+  count: number;
 }
