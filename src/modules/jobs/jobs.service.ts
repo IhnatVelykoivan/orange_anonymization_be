@@ -71,6 +71,31 @@ export class JobsService {
     DEVICE_ID: 'IP_ADDRESS',
   };
 
+  private readonly ALLOWED_ENTITY_TYPES = new Set([
+    'PERSON',
+    'DATE_TIME',
+    'EMAIL_ADDRESS',
+    'PHONE_NUMBER',
+    'LOCATION',
+    'US_SSN',
+    'MEDICAL_RECORD_NUMBER',
+    'ORGANIZATION',
+    'IP_ADDRESS',
+    'DEVICE_ID',
+    'US_PASSPORT',
+    'NATIONAL_ID',
+    'CREDIT_CARD',
+    'IBAN_CODE',
+    'GEOPOINT',
+    'BIOMETRIC',
+    'PHOTO',
+    'FREE_TEXT',
+    'URL',
+    'US_DRIVER_LICENSE',
+    'VEHICLE',
+    'HEALTH_PLAN',
+  ]);
+
   private readonly frameworkMap: Record<string, string[]> = {
     gdpr: ['eu-gdpr'],
     'uk-gdpr': ['uk-gdpr'],
@@ -442,6 +467,27 @@ export class JobsService {
     const anonymizationRate =
       totalEntities > 0 ? Math.round((anonymizedEntities / totalEntities) * 100) : 0;
 
+    const jobsWithSynthetic = await this.createFilteredJobsQuery(
+      userId,
+      finalStartDate,
+      finalEndDate,
+      framework,
+      JobStatus.SUCCEEDED,
+    )
+      .select(['job.wizardState'])
+      .getMany();
+
+    const syntheticRecords = jobsWithSynthetic.reduce((acc, job) => {
+      const strategies =
+        (job.wizardState?.configSettings?.strategies as Record<string, string>) || {};
+
+      const syntheticCount = Object.values(strategies).filter(
+        (strategy) => strategy === Strategy.Synthetic,
+      ).length;
+
+      return acc + syntheticCount;
+    }, 0);
+
     const recentActivity = (recentActivityRaw as RecentActivityRaw[]).map((job) => ({
       id: job.job_id,
       framework: job.job_framework || 'Custom',
@@ -457,14 +503,18 @@ export class JobsService {
       entities: parseInt(item.entitiesCount, 10) || 0,
     }));
 
-    const emptyState = totalDocuments === 0;
+    const hasAnyJobs = await this.jobRepository.exist({
+      where: { userId },
+    });
+
+    const emptyState = !hasAnyJobs;
 
     return {
       metrics: {
         totalDocuments,
         entitiesDetected: totalEntities,
         anonymizationRate,
-        syntheticRecords: 0,
+        syntheticRecords,
       },
       chartData,
       recentActivity,
@@ -592,8 +642,11 @@ export class JobsService {
     status?: JobStatus,
   ): Promise<RecentActivityResponse> {
     const skip = (page - 1) * limit;
-    const finalStartDate = startDate || new Date(new Date().setDate(new Date().getDate() - 30));
-    const finalEndDate = endDate || new Date();
+    const finalStartDate = startDate
+      ? new Date(startDate)
+      : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+    const finalEndDate = endDate ? new Date(endDate) : new Date();
 
     const queryBuilder = this.buildAnalysesTableQuery(
       userId,
@@ -701,26 +754,34 @@ export class JobsService {
       ? `AND job.framework IN (${frameworks.map(() => '?').join(', ')})`
       : '';
 
-    const params = [userId, JobStatus.SUCCEEDED, startDate, endDate, ...(frameworks ?? [])];
+    const params = [
+      userId,
+      JobStatus.SUCCEEDED,
+      startDate,
+      endDate,
+      ...(frameworks ?? []),
+      ...this.ALLOWED_ENTITY_TYPES,
+    ];
 
     const result = (await this.jobRepository.query(
       `
     SELECT
       jt.entity_type AS \`key\`,
       COUNT(*) AS count
-    FROM jobs job,
-    JSON_TABLE(
+    FROM jobs job
+    JOIN JSON_TABLE(
       job.wizardState,
       '$.analysisMetadata[*]'
       COLUMNS (
-        entity_type VARCHAR(255)
-        PATH '$.entity_type'
+        entity_type VARCHAR(255) PATH '$.entity_type'
       )
-    ) AS jt
+    ) jt
     WHERE job.userId = ?
       AND job.status = ?
       AND job.createdAt BETWEEN ? AND ?
       ${frameworkCondition}
+      AND jt.entity_type IS NOT NULL
+      AND jt.entity_type IN (${[...this.ALLOWED_ENTITY_TYPES].map(() => '?').join(', ')})
     GROUP BY jt.entity_type
     `,
       params,
