@@ -2,6 +2,9 @@
 
 Backend service for De-ID Studio: a platform for PII/PHI detection, anonymization, and synthetic data generation.
 
+<img width="800" height="396" alt="ezgif-48af01a6a91b98ae" src="https://github.com/user-attachments/assets/b77e256c-0a87-44cd-b744-0dbf7c675cc7" />
+
+
 > Frontend: [ZenBit-Tech/orange_anonymization_fe](https://github.com/ZenBit-Tech/orange_anonymization_fe)
 
 ## Tech Stack
